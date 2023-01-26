@@ -2,6 +2,7 @@ import math
 import random
 import pygame
 import tkinter as tk
+from tkinter import messagebox
 
 # Cube class
 
@@ -96,7 +97,12 @@ class snake(object):
        
 
     def reset(self, pos):
-        pass
+        self.head = cube(pos)
+        self.body = []
+        self.body.append(self.head)
+        self.turns = {}
+        self.dirnx = 0
+        self.dirny = 1
 
     def addCube(self):
         tail = self.body[-1]
@@ -158,7 +164,14 @@ def randomSnack(rows, item):
 
 
 def message_box(subject, content):
-    pass
+    root = tk.Tk()
+    root.attributes("-topmost", True)
+    root.withdraw()
+    messagebox.showinfo(subject, content)
+    try:
+        root.destroy()
+    except:
+        pass
 
 
 def main():
@@ -179,6 +192,13 @@ def main():
         if s.body[0].pos == snack.pos:
             s.addCube()
             snack = cube(randomSnack(rows, s), color = (0,255,0))
+
+        for x in range(len(s.body)):
+            if s.body[x].pos in list(map(lambda z:z.pos,s.body[x+1:])):
+                print('Score: ', len(s.body))
+                message_box("You Lost!", "Play again...")
+                s.reset((10,10))
+                break
 
         redrawWindow(win)
 
